@@ -50,7 +50,11 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
   // Hash the password with a salt of 12
-  this.password = await bcrypt.hash(this.password, 12);
+  this.password = await bcrypt.hash(
+    this.password,
+    process.env.BCRYPT_SALT_ROUNDS || 12
+  );
+  this.passwordChangedAt = Date.now() - 1000; // Set password changed date to now
   next();
 });
 
