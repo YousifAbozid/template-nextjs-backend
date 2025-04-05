@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import { generateToken } from '@/lib/jwt';
 
 // Define the User schema
 const userSchema = new mongoose.Schema(
@@ -16,7 +18,12 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
     },
-    // Add more fields as needed
+    password: {
+      type: String,
+      required: [true, 'Please provide a password'],
+      minlength: [8, 'Password must be at least 8 characters'],
+      select: false, // Don't return password by default
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -26,13 +33,40 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt fields
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
+
+// Hash password before saving
+userSchema.pre('save', async function (next) {
+  // Only run this function if password was modified
+  if (!this.isModified('password')) return next();
+
+  // Hash the password with a salt of 12
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
+
+// Check if password is correct
+userSchema.methods.correctPassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Generate JWT token
+userSchema.methods.generateAuthToken = function () {
+  return generateToken({
+    id: this._id,
+    email: this.email,
+    role: this.role,
+  });
+};
 
 // Export the model
 export default mongoose.models.User || mongoose.model('User', userSchema);
