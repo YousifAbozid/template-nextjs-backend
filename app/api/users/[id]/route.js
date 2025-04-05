@@ -1,6 +1,8 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
 import mongoose from 'mongoose';
+import { updateUserSchema } from '@/schemas/user.schema';
+import { validateSchema } from '@/lib/validation';
 
 export async function GET(request, { params }) {
   try {
@@ -46,12 +48,25 @@ export async function PUT(request, { params }) {
       );
     }
 
-    const userData = await request.json();
+    // Get and validate request body
+    const body = await request.json();
+    const {
+      success,
+      data: validatedData,
+      errors,
+    } = await validateSchema(body, updateUserSchema);
 
-    // Find user and update
+    if (!success) {
+      return Response.json(
+        { error: 'Validation failed', validationErrors: errors },
+        { status: 400 }
+      );
+    }
+
+    // Find user and update with validated data
     const updatedUser = await User.findByIdAndUpdate(
       id,
-      { $set: userData },
+      { $set: validatedData },
       { new: true, runValidators: true }
     );
 

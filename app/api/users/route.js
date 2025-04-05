@@ -1,15 +1,70 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
+import { createUserSchema, userQuerySchema } from '@/schemas/user.schema';
+import { withValidation } from '@/lib/validation';
 
-export async function GET() {
+export async function GET(request) {
   try {
     await connectToDatabase();
 
-    const users = await User.find({}).select('name email role isActive');
+    // Parse query parameters
+    const url = new URL(request.url);
+    const queryParams = Object.fromEntries(url.searchParams);
+
+    // Validate query parameters
+    const {
+      success,
+      data: validQuery,
+      errors,
+    } = await validateSchema(queryParams, userQuerySchema);
+
+    if (!success) {
+      return Response.json(
+        { error: 'Invalid query parameters', validationErrors: errors },
+        { status: 400 }
+      );
+    }
+
+    // Build filter based on validated query
+    const filter = {};
+    if (validQuery.isActive !== undefined) {
+      filter.isActive = validQuery.isActive === 'true';
+    }
+    if (validQuery.role) {
+      filter.role = validQuery.role;
+    }
+    if (validQuery.search) {
+      filter.$or = [
+        { name: { $regex: validQuery.search, $options: 'i' } },
+        { email: { $regex: validQuery.search, $options: 'i' } },
+      ];
+    }
+
+    // Pagination
+    const page = validQuery.page || 1;
+    const limit = validQuery.limit || 10;
+    const skip = (page - 1) * limit;
+
+    // Execute query
+    const users = await User.find(filter)
+      .select(
+        validQuery.fields?.replace(/,/g, ' ') || 'name email role isActive'
+      )
+      .sort(validQuery.sort || '-createdAt')
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count for pagination
+    const total = await User.countDocuments(filter);
 
     return Response.json({
       users,
-      total: users.length,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
       success: true,
     });
   } catch (error) {
@@ -21,22 +76,13 @@ export async function GET() {
   }
 }
 
-export async function POST(request) {
+// Use withValidation middleware for POST requests
+export const POST = withValidation(createUserSchema, async validatedData => {
   try {
     await connectToDatabase();
 
-    const body = await request.json();
-
-    // Validate input
-    if (!body.name || !body.email) {
-      return Response.json(
-        { error: 'Name and email are required' },
-        { status: 400 }
-      );
-    }
-
     // Check if user with this email already exists
-    const existingUser = await User.findOne({ email: body.email });
+    const existingUser = await User.findOne({ email: validatedData.email });
     if (existingUser) {
       return Response.json(
         { error: 'User with this email already exists' },
@@ -44,13 +90,8 @@ export async function POST(request) {
       );
     }
 
-    // Create new user
-    const newUser = await User.create({
-      name: body.name,
-      email: body.email,
-      role: body.role || 'user',
-      isActive: body.isActive !== undefined ? body.isActive : true,
-    });
+    // Create new user with validated data
+    const newUser = await User.create(validatedData);
 
     return Response.json(
       {
@@ -66,7 +107,7 @@ export async function POST(request) {
       { status: 500 }
     );
   }
-}
+});
 
 export async function OPTIONS() {
   return new Response(null, {
