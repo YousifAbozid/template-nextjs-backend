@@ -1,69 +1,109 @@
-// Reference the same in-memory database (in production this would be a real database)
-let users = [
-  { id: 1, name: 'John Doe', email: 'john@example.com' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-];
+import { connectToDatabase } from '@/lib/mongodb';
+import User from '@/models/User';
+import mongoose from 'mongoose';
 
 export async function GET(request, { params }) {
-  // Ensure params is properly resolved
-  const { id } = params;
-  const userId = parseInt(id, 10);
-  const user = users.find(user => user.id === userId);
+  try {
+    await connectToDatabase();
 
-  if (!user) {
-    return Response.json({ error: 'User not found' }, { status: 404 });
+    const { id } = params;
+
+    // Validate MongoDB ID format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return Response.json(
+        { error: 'Invalid user ID format' },
+        { status: 400 }
+      );
+    }
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return Response.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    return Response.json({ user, success: true });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return Response.json(
+      { error: 'Failed to fetch user', details: error.message },
+      { status: 500 }
+    );
   }
-
-  return Response.json({ user, success: true });
 }
 
 export async function PUT(request, { params }) {
   try {
-    // Ensure params is properly resolved
+    await connectToDatabase();
+
     const { id } = params;
-    const userId = parseInt(id, 10);
+
+    // Validate MongoDB ID format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return Response.json(
+        { error: 'Invalid user ID format' },
+        { status: 400 }
+      );
+    }
+
     const userData = await request.json();
 
-    const userIndex = users.findIndex(user => user.id === userId);
+    // Find user and update
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: userData },
+      { new: true, runValidators: true }
+    );
 
-    if (userIndex === -1) {
+    if (!updatedUser) {
       return Response.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Update user data
-    users[userIndex] = {
-      ...users[userIndex],
-      ...userData,
-      id: userId, // Ensure ID doesn't change
-    };
-
     return Response.json({
-      user: users[userIndex],
+      user: updatedUser,
       success: true,
     });
   } catch (error) {
-    return Response.json({ error: 'Invalid request' }, { status: 400 });
+    console.error('Error updating user:', error);
+    return Response.json(
+      { error: 'Failed to update user', details: error.message },
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(request, { params }) {
-  // Ensure params is properly resolved
-  const { id } = params;
-  const userId = parseInt(id, 10);
-  const userIndex = users.findIndex(user => user.id === userId);
+  try {
+    await connectToDatabase();
 
-  if (userIndex === -1) {
-    return Response.json({ error: 'User not found' }, { status: 404 });
+    const { id } = params;
+
+    // Validate MongoDB ID format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return Response.json(
+        { error: 'Invalid user ID format' },
+        { status: 400 }
+      );
+    }
+
+    // Find user and delete
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return Response.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    return Response.json({
+      deletedUser,
+      success: true,
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return Response.json(
+      { error: 'Failed to delete user', details: error.message },
+      { status: 500 }
+    );
   }
-
-  // Remove the user
-  const deletedUser = users[userIndex];
-  users = users.filter(user => user.id !== userId);
-
-  return Response.json({
-    deletedUser,
-    success: true,
-  });
 }
 
 export async function OPTIONS() {
