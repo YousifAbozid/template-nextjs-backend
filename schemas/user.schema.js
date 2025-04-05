@@ -8,11 +8,40 @@ const userBaseSchema = z.object({
   role: z.enum(['user', 'admin']).optional().default('user'),
 });
 
-// Schema for creating a new user
-export const createUserSchema = userBaseSchema;
+// Schema for creating a new user with password
+export const createUserSchema = userBaseSchema
+  .extend({
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(100),
+    confirmPassword: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+// Schema for user login
+export const loginSchema = z.object({
+  email: z.string().email('Invalid email address format'),
+  password: z.string().min(1, 'Password is required'),
+});
 
 // Schema for updating an existing user
 export const updateUserSchema = userBaseSchema.partial();
+
+// Schema for changing password
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string(),
+    newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmNewPassword: z.string(),
+  })
+  .refine(data => data.newPassword === data.confirmNewPassword, {
+    message: "Passwords don't match",
+    path: ['confirmNewPassword'],
+  });
 
 // Schema for user IDs
 export const userIdSchema = z.object({
