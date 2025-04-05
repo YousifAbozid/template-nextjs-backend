@@ -1,7 +1,7 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
 import { createUserSchema, userQuerySchema } from '@/schemas/user.schema';
-import { withValidation } from '@/lib/validation';
+import { validateSchema, withValidation } from '@/lib/validation';
 
 export async function GET(request) {
   try {
