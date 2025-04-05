@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/init-logs.js && next start",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx app",
     "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx app --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
@@ -25,7 +25,8 @@
     "mongoose": "^8.13.2",
     "mongodb": "^6.15.0",
     "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^3.0.2"
+    "bcryptjs": "^3.0.2",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
