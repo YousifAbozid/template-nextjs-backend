@@ -3,35 +3,32 @@ import User from '@/models/User';
 import mongoose from 'mongoose';
 import { updateUserSchema } from '@/schemas/user.schema';
 import { validateSchema } from '@/lib/validation';
+import {
+  handleApiError,
+  createNotFoundError,
+  createBadRequestError,
+} from '@/lib/errorHandler';
 
 export async function GET(request, { params }) {
   try {
     await connectToDatabase();
 
-    // Await params before destructuring
     const { id } = await params;
 
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return Response.json(
-        { error: 'Invalid user ID format' },
-        { status: 400 }
-      );
+      throw createBadRequestError('Invalid user ID format');
     }
 
     const user = await User.findById(id);
 
     if (!user) {
-      return Response.json({ error: 'User not found' }, { status: 404 });
+      throw createNotFoundError('User');
     }
 
     return Response.json({ user, success: true });
   } catch (error) {
-    console.error('Error fetching user:', error);
-    return Response.json(
-      { error: 'Failed to fetch user', details: error.message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'users/[id]/GET');
   }
 }
 
@@ -39,15 +36,11 @@ export async function PUT(request, { params }) {
   try {
     await connectToDatabase();
 
-    // Await params before destructuring
     const { id } = await params;
 
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return Response.json(
-        { error: 'Invalid user ID format' },
-        { status: 400 }
-      );
+      throw createBadRequestError('Invalid user ID format');
     }
 
     // Get and validate request body
@@ -73,7 +66,7 @@ export async function PUT(request, { params }) {
     );
 
     if (!updatedUser) {
-      return Response.json({ error: 'User not found' }, { status: 404 });
+      throw createNotFoundError('User');
     }
 
     return Response.json({
@@ -81,11 +74,7 @@ export async function PUT(request, { params }) {
       success: true,
     });
   } catch (error) {
-    console.error('Error updating user:', error);
-    return Response.json(
-      { error: 'Failed to update user', details: error.message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'users/[id]/PUT');
   }
 }
 
@@ -93,22 +82,18 @@ export async function DELETE(request, { params }) {
   try {
     await connectToDatabase();
 
-    // Await params before destructuring
     const { id } = await params;
 
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return Response.json(
-        { error: 'Invalid user ID format' },
-        { status: 400 }
-      );
+      throw createBadRequestError('Invalid user ID format');
     }
 
     // Find user and delete
     const deletedUser = await User.findByIdAndDelete(id);
 
     if (!deletedUser) {
-      return Response.json({ error: 'User not found' }, { status: 404 });
+      throw createNotFoundError('User');
     }
 
     return Response.json({
@@ -116,11 +101,7 @@ export async function DELETE(request, { params }) {
       success: true,
     });
   } catch (error) {
-    console.error('Error deleting user:', error);
-    return Response.json(
-      { error: 'Failed to delete user', details: error.message },
-      { status: 500 }
-    );
+    return handleApiError(error, 'users/[id]/DELETE');
   }
 }
 
