@@ -8,7 +8,8 @@ export async function GET(request, { params }) {
   try {
     await connectToDatabase();
 
-    const { id } = params;
+    // Await params before destructuring
+    const { id } = await params;
 
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -38,7 +39,8 @@ export async function PUT(request, { params }) {
   try {
     await connectToDatabase();
 
-    const { id } = params;
+    // Await params before destructuring
+    const { id } = await params;
 
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -91,7 +93,8 @@ export async function DELETE(request, { params }) {
   try {
     await connectToDatabase();
 
-    const { id } = params;
+    // Await params before destructuring
+    const { id } = await params;
 
     // Validate MongoDB ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
