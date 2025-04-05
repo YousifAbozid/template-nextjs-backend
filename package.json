@@ -23,7 +23,9 @@
     "react-dom": "^19.1.0",
     "zod": "^3.24.2",
     "mongoose": "^8.13.2",
-    "mongodb": "^6.15.0"
+    "mongodb": "^6.15.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^3.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
