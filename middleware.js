@@ -1,7 +1,24 @@
 import { NextResponse } from 'next/server';
 import { logApiRequest } from '@/lib/logger';
+import { apiLimiter, strictLimiter } from '@/middleware/rateLimiter';
 
-export function middleware(request) {
+export async function middleware(request) {
+  // Apply rate limiting based on path
+  let rateLimiterResponse = null;
+
+  if (request.nextUrl.pathname.startsWith('/api/auth/')) {
+    // Stricter rate limiting for auth endpoints
+    rateLimiterResponse = await strictLimiter(request);
+  } else if (request.nextUrl.pathname.startsWith('/api/')) {
+    // Standard API rate limiting
+    rateLimiterResponse = await apiLimiter(request);
+  }
+
+  // Return rate limiter response if it exists
+  if (rateLimiterResponse) {
+    return rateLimiterResponse;
+  }
+
   // Log API requests for debugging
   if (request.nextUrl.pathname.startsWith('/api/')) {
     logApiRequest(request);
