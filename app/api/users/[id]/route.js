@@ -5,8 +5,10 @@ let users = [
 ]
 
 export async function GET(request, { params }) {
-	const id = parseInt(params.id, 10)
-	const user = users.find((user) => user.id === id)
+	// Ensure params is properly resolved
+	const { id } = params
+	const userId = parseInt(id, 10)
+	const user = users.find((user) => user.id === userId)
 
 	if (!user) {
 		return Response.json({ error: 'User not found' }, { status: 404 })
@@ -17,10 +19,12 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
 	try {
-		const id = parseInt(params.id, 10)
+		// Ensure params is properly resolved
+		const { id } = params
+		const userId = parseInt(id, 10)
 		const userData = await request.json()
 
-		const userIndex = users.findIndex((user) => user.id === id)
+		const userIndex = users.findIndex((user) => user.id === userId)
 
 		if (userIndex === -1) {
 			return Response.json({ error: 'User not found' }, { status: 404 })
@@ -30,7 +34,7 @@ export async function PUT(request, { params }) {
 		users[userIndex] = {
 			...users[userIndex],
 			...userData,
-			id // Ensure ID doesn't change
+			id: userId // Ensure ID doesn't change
 		}
 
 		return Response.json({
@@ -43,8 +47,10 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-	const id = parseInt(params.id, 10)
-	const userIndex = users.findIndex((user) => user.id === id)
+	// Ensure params is properly resolved
+	const { id } = params
+	const userId = parseInt(id, 10)
+	const userIndex = users.findIndex((user) => user.id === userId)
 
 	if (userIndex === -1) {
 		return Response.json({ error: 'User not found' }, { status: 404 })
@@ -52,7 +58,7 @@ export async function DELETE(request, { params }) {
 
 	// Remove the user
 	const deletedUser = users[userIndex]
-	users = users.filter((user) => user.id !== id)
+	users = users.filter((user) => user.id !== userId)
 
 	return Response.json({
 		deletedUser,
