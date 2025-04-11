@@ -8,6 +8,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "node scripts/init-logs.js && next start",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx app",
     "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx app --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
@@ -34,7 +37,13 @@
     "eslint-config-next": "15.3.0",
     "prettier": "^3.5.3",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.0"
+    "lint-staged": "^15.5.0",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "supertest": "^7.1.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "msw": "^2.7.3",
+    "node-mocks-http": "^1.16.2"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
