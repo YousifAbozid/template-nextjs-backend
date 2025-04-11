@@ -88,7 +88,7 @@ export default function HomePage() {
                 </a>
                 {route.path.startsWith('/api') && (
                   <a
-                    href={`https://github.com/yourusername/template-nextjs-backend/tree/main/app${route.path}/route.js`}
+                    href={`https://github.com/YousifAbozid/template-nextjs-backend/tree/main/app${route.path}/route.js`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="source-button"
@@ -106,7 +106,7 @@ export default function HomePage() {
         <p>
           Made with Next.js - Check out the{' '}
           <a
-            href="https://github.com/yourusername/template-nextjs-backend"
+            href="https://github.com/YousifAbozid/template-nextjs-backend"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -157,28 +157,43 @@ export default function HomePage() {
 
         .categories {
           display: flex;
-          gap: 0.5rem;
+          gap: 0.75rem;
           flex-wrap: wrap;
           margin-bottom: 2rem;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid #e5e7eb;
         }
 
         .categories button {
-          background-color: #f3f4f6;
+          background-color: transparent;
           border: none;
           padding: 0.5rem 1rem;
-          border-radius: 0.375rem;
+          border-radius: 0.25rem 0.25rem 0 0;
           font-weight: 500;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease-in-out;
+          position: relative;
+          color: #6b7280;
         }
 
         .categories button:hover {
-          background-color: #e5e7eb;
+          color: #3b82f6;
         }
 
         .categories button.active {
+          color: #3b82f6;
+          font-weight: 600;
+        }
+
+        .categories button.active::after {
+          content: '';
+          position: absolute;
+          bottom: -0.5rem;
+          left: 0;
+          width: 100%;
+          height: 0.25rem;
           background-color: #3b82f6;
-          color: white;
+          border-radius: 0.125rem;
         }
 
         .routes-container {
