@@ -4,14 +4,20 @@ const logger = getLogger();
 
 /**
  * Simple in-memory store for rate limiting
- * Note: This works for single-instance deployments
- * For production with multiple instances, use Redis or another shared store
+ * Note: In serverless environments like Vercel, this will reset between invocations
+ * For production with multiple instances or serverless, use Redis or another external store
  */
 class MemoryStore {
   constructor() {
     this.store = new Map();
-    // Clean up the store periodically to avoid memory leaks
-    setInterval(() => this.cleanup(), 1000 * 60 * 10); // Clean every 10 minutes
+    // Clean up the store periodically (if running in a long-lived environment)
+    if (typeof setTimeout === 'function') {
+      const interval = setInterval(() => this.cleanup(), 1000 * 60 * 10); // Clean every 10 minutes
+      // Prevent the interval from keeping Node.js process alive
+      if (interval && interval.unref) {
+        interval.unref();
+      }
+    }
   }
 
   // Get current hit count for a key

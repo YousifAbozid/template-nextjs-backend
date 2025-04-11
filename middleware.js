@@ -33,12 +33,7 @@ export async function middleware(request) {
   return response;
 }
 
-// This is the correct way to set the runtime for middleware in Next.js 15.x
+// Updated config for compatibility with Vercel
 export const config = {
-  runtime: 'nodejs',
-  matcher: [
-    // Define the paths that should trigger this middleware
-    // For example: '/api/:path*' for all API routes
-    '/api/:path*',
-  ],
+  matcher: '/api/:path*',
 };
