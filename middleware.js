@@ -33,7 +33,12 @@ export async function middleware(request) {
   return response;
 }
 
+// This is the correct way to set the runtime for middleware in Next.js 15.x
 export const config = {
-  // Apply this middleware to all API routes
-  matcher: '/api/:path*',
+  runtime: 'nodejs',
+  matcher: [
+    // Define the paths that should trigger this middleware
+    // For example: '/api/:path*' for all API routes
+    '/api/:path*',
+  ],
 };

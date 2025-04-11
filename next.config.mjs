@@ -22,7 +22,10 @@ const nextConfig = {
 				}
 			]
 		}
-	]
+	],
+	experimental: {
+    nodeMiddleware: true, // Enable Node.js middleware
+  },
 }
 
 export default nextConfig

@@ -5,6 +5,8 @@ import path from 'path';
 const logsDir = path.join(process.cwd(), 'logs');
 
 if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
-  console.log('Created logs directory');
+  console.log('Creating logs directory...');
+  fs.mkdirSync(logsDir);
 }
+
+console.log('Logs directory initialized.');
