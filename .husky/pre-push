@@ -1,0 +1,36 @@
+#!/bin/sh
+echo "🚀 Running pre-push checks..."
+
+# Check if any source files changed since last push
+CHANGED_FILES=$(git diff --name-only @{push}..HEAD 2>/dev/null || git diff --name-only HEAD~1..HEAD)
+SOURCE_CHANGED=$(echo "$CHANGED_FILES" | grep -E '\.(js|jsx|ts|tsx|json)$' | grep -v 'src/types/api.ts' | grep -v 'src/types/client.ts' | grep -v 'src/openapi.json' || true)
+
+if [ -z "$SOURCE_CHANGED" ]; then
+  echo "📦 No source files changed, skipping checks"
+  exit 0
+fi
+
+echo "📦 Source files changed, running full codebase checks..."
+
+# Step 1: Validate configuration and formatting
+echo "🔍 Validating code formatting and configuration..."
+npm run test
+if [ $? -ne 0 ]; then
+  echo "❌ Code validation failed! Please fix formatting or linting errors."
+  echo "💡 Try running: npm run fix"
+  exit 1
+fi
+echo "✅ Code validation passed!"
+echo "✅ TypeScript types are valid!"
+
+# Step 3: Run build check
+echo "🏗️  Running build check..."
+npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Build check failed! Please fix build errors before pushing."
+  exit 1
+fi
+echo "✅ Build check passed!"
+
+echo "🎉 All pre-push checks passed successfully!"
+echo "🚀 Ready to push!"

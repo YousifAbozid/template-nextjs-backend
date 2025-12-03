@@ -1,26 +1,62 @@
 {
   "name": "template-nextjs-backend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "✨ Modern Next.js API. Ready for production deployment with optimized architecture 🚀",
+  "homepage": "https://github.com/YousifAbozid/template-nextjs-backend#readme",
+  "bugs": {
+    "url": "https://github.com/YousifAbozid/template-nextjs-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YousifAbozid/template-nextjs-backend.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Yousif Abozid",
+    "email": "yousif.abozid@yahoo.com",
+    "url": "https://github.com/YousifAbozid"
+  },
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "type-check": "tsc --noEmit",
+    "lint": "eslint app --cache --cache-location .eslintcache",
+    "lint:fix": "eslint app --fix --cache --cache-location .eslintcache",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,yml,yaml}\"",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "fix-all": "npm run lint:fix && npm run format",
+    "test": "npm run format:check && npm run lint && npm run type-check",
+    "upgrade": "npx npm-check-updates -u && npm install",
+    "prepare": "husky"
   },
   "dependencies": {
-    "next": "16.0.6",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "next": "16.0.7",
+    "react": "19.2.1",
+    "react-dom": "19.2.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.0.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "16.0.7",
+    "husky": "9.1.7",
+    "lint-staged": "16.2.7",
+    "prettier": "3.7.4",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix --cache --cache-location .eslintcache --no-warn-ignored",
+      "prettier --write"
+    ],
+    "*.{css,scss,less}": [
+      "prettier --write"
+    ]
   }
 }
