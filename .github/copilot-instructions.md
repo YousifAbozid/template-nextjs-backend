@@ -63,8 +63,8 @@ npm run api:dev        # Next.js dev + OpenAPI watching
 **Generated files (never edit manually)**:
 
 - `app/lib/api/types/openapi.json` - OpenAPI 3.0 spec
-- `app/lib/api/types/api-types.ts` - TypeScript types
-- `app/lib/api/types/api-client.ts` - Type-safe client
+- `app/lib/api/types/ApiTypes.ts` - TypeScript types
+- `app/lib/api/types/ApiClient.ts` - Type-safe client
 
 ## Database Patterns
 

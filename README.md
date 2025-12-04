@@ -228,8 +228,8 @@ The system automatically:
 ### Generated Files (Auto-updated)
 
 - `app/lib/api/types/openapi.json` - OpenAPI 3.0 specification
-- `app/lib/api/types/api-types.ts` - TypeScript types
-- `app/lib/api/types/api-client.ts` - Type-safe API client
+- `app/lib/api/types/ApiTypes.ts` - TypeScript types
+- `app/lib/api/types/ApiClient.ts` - Type-safe API client
 
 ## 🛠️ Tech Stack
 
