@@ -19,8 +19,8 @@
       "description": "Development server"
     },
     {
-      "url": "https://api.example.com",
-      "description": "Production server"
+      "url": "https://template-nextjs-backend.vercel.app",
+      "description": "Production server (Vercel)"
     }
   ],
   "paths": {
