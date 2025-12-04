@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { dbConfig } from '../config';
+import { dbConfig } from '@/lib/api/config';
 
 // Global variable to track connection status
 let isConnected = false;

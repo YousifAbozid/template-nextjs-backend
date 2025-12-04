@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum, IsDateString } from 'class-validator';
-import { ApiProperty } from '../decorators';
+import { ApiProperty } from '@/lib/api/decorators';
 
 // Create alias for optional properties
 const ApiPropertyOptional = ApiProperty;
