@@ -9,13 +9,13 @@ import { generateOpenAPI } from './generate-openapi.js';
 async function startWatchMode() {
   console.log('👀 Starting OpenAPI watch mode...\n');
 
-  const patterns = ['app/api/**/*.{js,ts}', 'lib/api/**/*.{js,ts}'];
+  const patterns = ['app/api/**/*.{js,ts}', 'app/lib/api/**/*.{js,ts}'];
 
   let isGenerating = false;
   let pendingRegeneration = false;
 
   const watcher = chokidar.watch(patterns, {
-    ignored: ['node_modules/**', '.next/**', 'dist/**', 'lib/api/types/**'],
+    ignored: ['node_modules/**', '.next/**', 'dist/**', 'app/lib/api/types/**'],
     persistent: true,
     ignoreInitial: false,
   });

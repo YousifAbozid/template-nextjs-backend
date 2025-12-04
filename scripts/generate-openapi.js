@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs/promises';
 import path from 'path';
+import { pathToFileURL } from 'url';
 import { openApiConfig } from '../app/lib/api/config.ts';
 
 /**
@@ -196,5 +197,10 @@ async function generateSimpleOpenAPI() {
   console.log(`- API client: ${openApiConfig.paths.output.client}`);
 }
 
-// Run the generation
-generateSimpleOpenAPI().catch(console.error);
+// Export the function for use in watch mode
+export { generateSimpleOpenAPI as generateOpenAPI };
+
+// Run the generation when called directly
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  generateSimpleOpenAPI().catch(console.error);
+}
