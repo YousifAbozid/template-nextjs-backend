@@ -123,8 +123,8 @@ export interface ProductResponseDto {
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
-import { withDatabase } from '@/app/lib/api/middleware';
-import { Product } from '@/app/lib/api/models';
+import { withDatabase } from '@/lib/api/middleware';
+import { Product } from '@/lib/api/models';
 
 export const GET = withDatabase(async () => {
   const products = await Product.find().sort({ createdAt: -1 });
