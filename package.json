@@ -20,7 +20,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run api:generate && next build",
     "start": "next start",
     "type-check": "tsc --noEmit",
     "lint": "eslint app --cache --cache-location .eslintcache",
@@ -30,23 +30,34 @@
     "fix-all": "npm run lint:fix && npm run format",
     "test": "npm run format:check && npm run lint && npm run type-check",
     "upgrade": "npx npm-check-updates -u && npm install",
-    "prepare": "husky"
+    "prepare": "husky",
+    "api:generate": "node scripts/generate-openapi.js",
+    "api:watch": "node scripts/watch-openapi.js",
+    "api:dev": "concurrently \"npm run dev\" \"npm run api:watch\""
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.3",
+    "glob": "^13.0.0",
     "next": "16.0.7",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "chokidar": "^5.0.0",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.7",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
+    "openapi-typescript": "^7.10.1",
     "prettier": "3.7.4",
+    "swagger-typescript-api": "^13.2.16",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"
   },

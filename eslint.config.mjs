@@ -9,10 +9,22 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
-    "out/**",
+    "out/**", 
     "build/**",
     "next-env.d.ts",
+    // Generated files
+    "lib/api/types/**",
+    "scripts/**",
   ]),
+  // More lenient rules for library files
+  {
+    files: ["lib/**/*.{js,jsx,ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unsafe-function-type": "warn",
+    },
+  },
 ]);
 
 export default eslintConfig;

@@ -1,0 +1,164 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Next.js Decorator API",
+    "version": "1.0.0",
+    "description": "Modern Next.js API with decorator-based OpenAPI generation",
+    "contact": {
+      "name": "API Support",
+      "url": "https://github.com/YousifAbozid/template-nextjs-backend"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    },
+    {
+      "url": "https://api.example.com",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "description": "Returns the current health status of the API service",
+        "operationId": "getHealthStatus",
+        "tags": ["Health"],
+        "parameters": [
+          {
+            "name": "detailed",
+            "in": "query",
+            "required": false,
+            "description": "Include detailed health information",
+            "schema": {
+              "type": "boolean",
+              "example": true
+            }
+          },
+          {
+            "name": "components",
+            "in": "query",
+            "required": false,
+            "description": "Check specific service components",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "example": ["database", "cache"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service is unhealthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponseDto": {
+        "type": "object",
+        "required": ["status", "timestamp"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["healthy", "degraded", "unhealthy"],
+            "description": "Overall health status",
+            "example": "healthy"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Health check timestamp",
+            "example": "2023-12-04T10:30:00Z"
+          },
+          "version": {
+            "type": "string",
+            "description": "Application version",
+            "example": "1.0.0"
+          },
+          "uptime": {
+            "type": "number",
+            "description": "Server uptime in seconds",
+            "example": 86400
+          },
+          "details": {
+            "type": "object",
+            "description": "Detailed health information (when detailed=true)",
+            "properties": {
+              "database": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "connected"
+                  },
+                  "responseTime": {
+                    "type": "number",
+                    "description": "Response time in milliseconds",
+                    "example": 15
+                  }
+                }
+              },
+              "memory": {
+                "type": "object",
+                "properties": {
+                  "usage": {
+                    "type": "number",
+                    "description": "Memory usage percentage",
+                    "example": 45.2
+                  },
+                  "total": {
+                    "type": "string",
+                    "description": "Total available memory",
+                    "example": "8GB"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token authentication"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "System health check operations"
+    }
+  ]
+}
