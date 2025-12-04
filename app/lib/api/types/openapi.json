@@ -24,60 +24,326 @@
     }
   ],
   "paths": {
-    "/api/health": {
+    "/api/docs": {
       "get": {
-        "summary": "Health check endpoint",
-        "description": "Returns the current health status of the API service",
-        "operationId": "getHealthStatus",
         "tags": [
-          "Health"
+          "Docs"
         ],
-        "parameters": [
-          {
-            "name": "detailed",
-            "in": "query",
-            "required": false,
-            "description": "Include detailed health information",
-            "schema": {
-              "type": "boolean",
-              "example": true
-            }
-          },
-          {
-            "name": "components",
-            "in": "query",
-            "required": false,
-            "description": "Check specific service components",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "example": [
-                "database",
-                "cache"
-              ]
-            }
-          }
-        ],
+        "summary": "GET /api/docs",
+        "description": "*",
         "responses": {
           "200": {
-            "description": "Service is healthy",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HealthResponseDto"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
           },
-          "503": {
-            "description": "Service is unhealthy",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HealthResponseDto"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "GET /api/health",
+        "description": "*",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "summary": "GET /api",
+        "description": "*",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/swagger": {
+      "get": {
+        "tags": [
+          "Swagger"
+        ],
+        "summary": "GET /api/swagger",
+        "description": "*",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "GET /api/users",
+        "description": "*",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "POST /api/users",
+        "description": "*",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email"
+                ]
               }
             }
           }
@@ -87,73 +353,131 @@
   },
   "components": {
     "schemas": {
-      "HealthResponseDto": {
+      "ComponentHealth": {
         "type": "object",
-        "required": [
-          "status",
-          "timestamp"
-        ],
         "properties": {
           "status": {
-            "type": "string",
-            "enum": [
-              "healthy",
-              "degraded",
-              "unhealthy"
-            ],
-            "description": "Overall health status",
-            "example": "healthy"
+            "type": "string"
           },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Health check timestamp",
-            "example": "2023-12-04T10:30:00Z"
+          "message": {
+            "type": "string"
           },
-          "version": {
-            "type": "string",
-            "description": "Application version",
-            "example": "1.0.0"
-          },
-          "uptime": {
-            "type": "number",
-            "description": "Server uptime in seconds",
-            "example": 86400
+          "responseTime": {
+            "type": "number"
           },
           "details": {
-            "type": "object",
-            "description": "Detailed health information (when detailed=true)",
-            "properties": {
-              "database": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "type": "string",
-                    "example": "connected"
-                  },
-                  "responseTime": {
-                    "type": "number",
-                    "description": "Response time in milliseconds",
-                    "example": 15
-                  }
-                }
-              },
-              "memory": {
-                "type": "object",
-                "properties": {
-                  "usage": {
-                    "type": "number",
-                    "description": "Memory usage percentage",
-                    "example": 45.2
-                  },
-                  "total": {
-                    "type": "string",
-                    "description": "Total available memory",
-                    "example": "8GB"
-                  }
-                }
-              }
-            }
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "message"
+        ]
+      },
+      "HealthResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "components": {
+            "type": "string"
+          },
+          "responseTime": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "status",
+          "timestamp",
+          "version"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_id",
+          "name",
+          "email",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string"
           }
         }
       }
@@ -167,10 +491,5 @@
       }
     }
   },
-  "tags": [
-    {
-      "name": "Health",
-      "description": "System health check operations"
-    }
-  ]
+  "tags": []
 }

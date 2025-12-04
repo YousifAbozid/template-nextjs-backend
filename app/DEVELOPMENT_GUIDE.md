@@ -297,16 +297,27 @@ export const openApiConfig = {
 
 ### How It Works
 
+The project now includes **dynamic OpenAPI generation** that automatically discovers and documents your API routes:
+
 1. **You create/modify** routes in `app/api/*/route.ts`
-2. **Build process runs** `npm run api:generate`
-3. **Script scans** all files matching patterns in config
-4. **Generates** OpenAPI spec and TypeScript types automatically
+2. **Script automatically scans** all `app/api/**/route.ts` files
+3. **Extracts HTTP methods** (GET, POST, PUT, etc.) from exported functions
+4. **Discovers types** from co-located `types.ts` files (supports interfaces, types, and classes)
+5. **Generates** comprehensive OpenAPI spec and TypeScript types
+
+### Key Features
+
+- **Automatic Route Discovery**: Scans all route files, no manual registration needed
+- **Type Extraction**: Reads DTOs from `types.ts` files and includes them in schemas
+- **Request Body Mapping**: Automatically links `CreateXxxDto` classes to POST endpoints
+- **Class Support**: Handles both interfaces/types and classes with decorators
+- **Zero Configuration**: Works out of the box, discovers your API structure
 
 ### Generated Files (🔴 Don't Touch)
 
-- `app/lib/api/types/openapi.json` - OpenAPI specification
-- `app/lib/api/types/api-types.ts` - TypeScript types
-- `app/lib/api/types/api-client.ts` - API client code
+- `app/lib/api/types/openapi.json` - Complete OpenAPI 3.0 specification with all discovered routes
+- `app/lib/api/types/api-types.ts` - TypeScript types for all endpoints and schemas
+- `app/lib/api/types/api-client.ts` - Auto-generated API client with type safety
 
 ### Manual Generation
 
@@ -314,12 +325,27 @@ export const openApiConfig = {
 # Generate API documentation and types
 npm run api:generate
 
-# Watch for changes and regenerate
+# Watch for changes and regenerate automatically
 npm run api:watch
 
-# Development with auto-generation
+# Development with live auto-generation
 npm run api:dev
 ```
+
+### Adding New Routes
+
+When you add a new route, the system will automatically:
+
+1. **Discover the route** on next generation
+2. **Extract HTTP methods** from your exports
+3. **Include request/response schemas** from types files
+4. **Update documentation** in Swagger UI
+
+**Example**: Adding `/api/products/route.ts` with `GET` and `POST` exports will automatically appear in:
+
+- OpenAPI spec at `/api/swagger`
+- Interactive docs at `/api/docs`
+- Generated TypeScript types
 
 ---
 

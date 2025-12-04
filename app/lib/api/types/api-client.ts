@@ -10,52 +10,50 @@
  * ---------------------------------------------------------------
  */
 
+export interface ComponentHealth {
+  status: string;
+  message: string;
+  responseTime?: number;
+  details?: string;
+}
+
 export interface HealthResponseDto {
-  /**
-   * Overall health status
-   * @example "healthy"
-   */
-  status: "healthy" | "degraded" | "unhealthy";
-  /**
-   * Health check timestamp
-   * @format date-time
-   * @example "2023-12-04T10:30:00Z"
-   */
+  status: string;
   timestamp: string;
-  /**
-   * Application version
-   * @example "1.0.0"
-   */
-  version?: string;
-  /**
-   * Server uptime in seconds
-   * @example 86400
-   */
-  uptime?: number;
-  /** Detailed health information (when detailed=true) */
-  details?: {
-    database?: {
-      /** @example "connected" */
-      status?: string;
-      /**
-       * Response time in milliseconds
-       * @example 15
-       */
-      responseTime?: number;
-    };
-    memory?: {
-      /**
-       * Memory usage percentage
-       * @example 45.2
-       */
-      usage?: number;
-      /**
-       * Total available memory
-       * @example "8GB"
-       */
-      total?: string;
-    };
-  };
+  version: string;
+  message?: string;
+  components?: string;
+  responseTime?: number;
+}
+
+export interface CreateUserDto {
+  name: string;
+  email: string;
+}
+
+export interface UserResponseDto {
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateUserDto {
+  name?: string;
+  email?: string;
+}
+
+export interface ApiResponse {
+  success?: boolean;
+  message?: string;
+  data?: object;
+}
+
+export interface ErrorResponse {
+  /** @example false */
+  success?: boolean;
+  error?: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -327,32 +325,171 @@ export class Api<
 > extends HttpClient<SecurityDataType> {
   api = {
     /**
-     * @description Returns the current health status of the API service
+     * @description *
+     *
+     * @tags Docs
+     * @name DocsList
+     * @summary GET /api/docs
+     * @request GET:/api/docs
+     */
+    docsList: (params: RequestParams = {}) =>
+      this.request<
+        {
+          success?: boolean;
+          data?: object;
+          message?: string;
+        },
+        {
+          /** @example false */
+          success?: boolean;
+          error?: string;
+        }
+      >({
+        path: `/api/docs`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description *
      *
      * @tags Health
-     * @name GetHealthStatus
-     * @summary Health check endpoint
+     * @name HealthList
+     * @summary GET /api/health
      * @request GET:/api/health
      */
-    getHealthStatus: (
-      query?: {
-        /**
-         * Include detailed health information
-         * @example true
-         */
-        detailed?: boolean;
-        /**
-         * Check specific service components
-         * @example ["database","cache"]
-         */
-        components?: string[];
+    healthList: (params: RequestParams = {}) =>
+      this.request<
+        {
+          success?: boolean;
+          data?: object;
+          message?: string;
+        },
+        {
+          /** @example false */
+          success?: boolean;
+          error?: string;
+        }
+      >({
+        path: `/api/health`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description *
+     *
+     * @tags Api
+     * @name GetApi
+     * @summary GET /api
+     * @request GET:/api
+     */
+    getApi: (params: RequestParams = {}) =>
+      this.request<
+        {
+          success?: boolean;
+          data?: object;
+          message?: string;
+        },
+        {
+          /** @example false */
+          success?: boolean;
+          error?: string;
+        }
+      >({
+        path: `/api`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description *
+     *
+     * @tags Swagger
+     * @name SwaggerList
+     * @summary GET /api/swagger
+     * @request GET:/api/swagger
+     */
+    swaggerList: (params: RequestParams = {}) =>
+      this.request<
+        {
+          success?: boolean;
+          data?: object;
+          message?: string;
+        },
+        {
+          /** @example false */
+          success?: boolean;
+          error?: string;
+        }
+      >({
+        path: `/api/swagger`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description *
+     *
+     * @tags Users
+     * @name UsersList
+     * @summary GET /api/users
+     * @request GET:/api/users
+     */
+    usersList: (params: RequestParams = {}) =>
+      this.request<
+        {
+          success?: boolean;
+          data?: object;
+          message?: string;
+        },
+        {
+          /** @example false */
+          success?: boolean;
+          error?: string;
+        }
+      >({
+        path: `/api/users`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description *
+     *
+     * @tags Users
+     * @name UsersCreate
+     * @summary POST /api/users
+     * @request POST:/api/users
+     */
+    usersCreate: (
+      data: {
+        name: string;
+        email: string;
       },
       params: RequestParams = {},
     ) =>
-      this.request<HealthResponseDto, HealthResponseDto>({
-        path: `/api/health`,
-        method: "GET",
-        query: query,
+      this.request<
+        {
+          success?: boolean;
+          data?: object;
+          message?: string;
+        },
+        {
+          /** @example false */
+          success?: boolean;
+          error?: string;
+        }
+      >({
+        path: `/api/users`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
