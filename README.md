@@ -1,267 +1,304 @@
-# Next.js Backend Template with Decorator-Based OpenAPI System
+# 🚀 Next.js Backend Template
 
-✨ **Modern Next.js API Template with TypeScript decorator-based OpenAPI generation** 🚀
+A production-ready Next.js 16+ API backend template with MongoDB integration, dynamic OpenAPI generation, and automatic type-safe documentation.
 
-A comprehensive Next.js backend template featuring a complete decorator-based OpenAPI generation system that provides type-safe API development with automatic documentation generation.
+## ✨ Features
 
-## 🌟 Features
+### 🎯 **Dynamic OpenAPI System**
 
-### 🎯 **Decorator-Based OpenAPI System**
+- **Automatic Route Discovery**: Scans `app/api/**/route.ts` files automatically
+- **Type Extraction**: Reads co-located `types.ts` files and generates schemas
+- **Zero Configuration**: Works out of the box with your existing code structure
+- **Live Documentation**: Interactive Swagger UI at `/api/docs`
+- **Type Safety**: Auto-generated TypeScript types and API client
 
-- **Custom Decorators**: `@ApiProperty`, `@ApiOperation`, `@ApiTags`, parameter decorators
-- **DTO-First Development**: Combine OpenAPI docs with class-validator decorators
-- **Schema Generation**: Reflection-based OpenAPI 3.0 schema generation
-- **Type Safety**: Generated TypeScript types and API client
-- **Validation**: Built-in request validation using class-validator
+### 🗃️ **MongoDB Integration**
 
-### 🔧 **Development Experience**
+- **Mongoose ODM**: Full MongoDB integration with schema validation
+- **Connection Caching**: Optimized for serverless environments
+- **Middleware Pattern**: `withDatabase` wrapper for seamless DB connections
+- **Model Organization**: Clean separation of concerns with organized models
+
+### 🔧 **Developer Experience**
 
 - **Hot Reload**: Watch mode for automatic OpenAPI regeneration
-- **Build Integration**: OpenAPI generation integrated into Next.js build process
-- **Interactive Docs**: Built-in API documentation UI at `/docs`
-- **Type Generation**: Automatic TypeScript types and API client generation
-
-### 🛠️ **Production Ready**
-
-- **ES Modules**: Modern JavaScript with .js extension imports
-- **Clean Architecture**: Separation of concerns with organized file structure
-- **Error Handling**: Structured error responses with proper OpenAPI schemas
-- **Validation**: Runtime validation with comprehensive error messages
+- **Type Safety**: Full TypeScript support with strict type checking
+- **Route-Centric**: Co-located types and endpoints for better maintainability
+- **Modern Stack**: Next.js 16+ App Router with ES modules
 
 ## 🚀 Quick Start
 
-### 1. Installation
+### Prerequisites
+
+- Node.js 18+
+- MongoDB Atlas account or local MongoDB instance
+- npm or yarn
+
+### Installation
 
 ```bash
-git clone <your-repo>
+# Clone the template
+git clone https://github.com/YousifAbozid/template-nextjs-backend.git
 cd template-nextjs-backend
+
+# Install dependencies
 npm install
+
+# Setup environment
+cp .env.example .env
+# Edit .env with your MongoDB connection string
+
+# Generate API documentation and types
+npm run api:generate
+
+# Start development server
+npm run dev
 ```
 
-### 2. Start Development
+### Environment Variables
 
 ```bash
-# Start with OpenAPI watching
-npm run api:dev
-
-# Or start separately
-npm run dev          # Next.js development server
-npm run api:watch    # OpenAPI generation watch mode
+# .env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database
+API_TITLE="Your API Title"
+API_VERSION="1.0.0"
+API_DESCRIPTION="Your API Description"
 ```
-
-### 3. Generate OpenAPI Documentation
-
-```bash
-npm run api:generate  # Generate OpenAPI spec, types, and client
-```
-
-### 4. View Documentation
-
-- **Interactive UI**: http://localhost:3000/docs
-- **OpenAPI JSON**: http://localhost:3000/api/docs
 
 ## 📁 Project Structure
 
 ```
-├── app/api/              # Next.js API routes
-│   ├── health/          # Health check endpoint
-│   ├── users/           # User management endpoints
-│   └── docs/            # OpenAPI JSON endpoint
-├── lib/api/             # Decorator system
-│   ├── decorators/      # Custom decorators (@ApiProperty, @ApiOperation, etc.)
-│   ├── validation/      # Validation middleware and decorators
-│   ├── schema/          # OpenAPI schema generation engine
-│   ├── dto/            # Data Transfer Objects
-│   └── types/          # Generated types (auto-generated)
-├── scripts/            # OpenAPI generation scripts
-└── app/docs/          # Interactive documentation page
+app/
+├── api/                    # 🟢 API Routes (You modify these)
+│   ├── users/
+│   │   ├── route.ts       # API endpoints (GET, POST, etc.)
+│   │   └── types.ts       # Route-specific DTOs/interfaces
+│   ├── health/            # Health check endpoint
+│   ├── docs/              # Swagger UI documentation
+│   └── swagger/           # OpenAPI specification endpoint
+├── lib/                   # Shared utilities and business logic
+│   └── api/
+│       ├── database/      # 🟢 Database connection utilities
+│       ├── middleware/    # 🟢 Custom middleware
+│       ├── models/        # 🟢 Mongoose models
+│       ├── config.ts      # 🟡 API configuration
+│       └── types/         # 🔴 Auto-generated files (don't edit)
+├── layout.tsx             # Root layout
+└── page.tsx               # Landing page
 ```
+
+**Legend**: 🟢 Safe to modify | 🟡 Modify carefully | 🔴 Auto-generated (don't touch)
+
+## 🎯 Adding New API Routes
+
+### 1. Create Route Structure
+
+```bash
+mkdir app/api/products
+touch app/api/products/route.ts app/api/products/types.ts
+```
+
+### 2. Define Types (`types.ts`)
+
+```typescript
+export class CreateProductDto {
+  name!: string;
+  price!: number;
+  category!: string;
+  description?: string;
+}
+
+export interface ProductResponseDto {
+  _id: string;
+  name: string;
+  price: number;
+  category: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
+
+### 3. Create Route Handler (`route.ts`)
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { withDatabase } from '@/app/lib/api/middleware';
+import { Product } from '@/app/lib/api/models';
+
+export const GET = withDatabase(async () => {
+  const products = await Product.find().sort({ createdAt: -1 });
+  return NextResponse.json({
+    success: true,
+    data: products,
+    count: products.length,
+  });
+});
+
+export const POST = withDatabase(async (req: NextRequest) => {
+  const body = await req.json();
+  const product = new Product(body);
+  const savedProduct = await product.save();
+
+  return NextResponse.json(
+    {
+      success: true,
+      data: savedProduct,
+      message: 'Product created successfully',
+    },
+    { status: 201 }
+  );
+});
+```
+
+### 4. Create Database Model (`app/lib/api/models/Product.ts`)
+
+```typescript
+import mongoose, { Schema, Document } from 'mongoose';
+
+export interface IProduct extends Document {
+  name: string;
+  price: number;
+  category: string;
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const ProductSchema: Schema<IProduct> = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    price: { type: Number, required: true, min: 0 },
+    category: { type: String, required: true, trim: true },
+    description: { type: String, trim: true },
+  },
+  { timestamps: true }
+);
+
+export const Product =
+  mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);
+```
+
+### 5. Regenerate Documentation
+
+```bash
+npm run api:generate
+```
+
+**Result**: Your new route automatically appears in:
+
+- OpenAPI spec at `/api/swagger`
+- Interactive docs at `/api/docs`
+- Generated TypeScript types
 
 ## 🔧 Available Scripts
 
 ```bash
 npm run dev              # Start development server
 npm run build            # Build for production (includes OpenAPI generation)
+npm run start            # Start production server
 npm run api:generate     # Generate OpenAPI spec, types, and client
 npm run api:watch        # Watch mode for development
 npm run api:dev          # Start dev server + OpenAPI watching
 npm run type-check       # TypeScript type checking
 npm run lint             # ESLint
+npm run lint:fix         # ESLint with auto-fix
 npm run format           # Prettier formatting
+npm run test             # Run all checks (format, lint, type-check)
 ```
 
-## 📋 API Examples
+## 📖 API Documentation
 
-### Health Check Endpoint
+Once running, access your API documentation:
+
+- **Interactive Docs**: [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
+- **OpenAPI Spec**: [http://localhost:3000/api/swagger](http://localhost:3000/api/swagger)
+- **Health Check**: [http://localhost:3000/api/health](http://localhost:3000/api/health)
+
+## 🔄 Auto-Generation Workflow
+
+The system automatically:
+
+1. **Discovers Routes**: Scans all `app/api/**/route.ts` files
+2. **Extracts Methods**: Finds exported HTTP methods (GET, POST, etc.)
+3. **Reads Types**: Processes co-located `types.ts` files for schemas
+4. **Generates Docs**: Creates comprehensive OpenAPI specification
+5. **Creates Types**: Generates TypeScript types and API client
+
+### Generated Files (Auto-updated)
+
+- `app/lib/api/types/openapi.json` - OpenAPI 3.0 specification
+- `app/lib/api/types/api-types.ts` - TypeScript types
+- `app/lib/api/types/api-client.ts` - Type-safe API client
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 16+](https://nextjs.org/) (App Router)
+- **Language**: TypeScript with ES Modules
+- **Database**: [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/)
+- **Documentation**: [OpenAPI 3.0](https://spec.openapis.org/oas/v3.0.3) + [Swagger UI](https://swagger.io/tools/swagger-ui/)
+- **Type Generation**: [openapi-typescript](https://github.com/drwpow/openapi-typescript) + [swagger-typescript-api](https://github.com/acacode/swagger-typescript-api)
+- **Code Quality**: [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) + [TypeScript](https://www.typescriptlang.org/)
+- **Development**: [Chokidar](https://github.com/paulmillr/chokidar) file watching + [Concurrently](https://github.com/open-cli-tools/concurrently)
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
 
 ```bash
-# Basic health check
-GET /api/health
+# Install Vercel CLI
+npm i -g vercel
 
-# With detailed information
-GET /api/health?detailed=true&components=database,cache
+# Deploy
+vercel --prod
 ```
 
-### Users CRUD Operations
+### Docker
 
 ```bash
-# Get all users (with pagination)
-GET /api/users?limit=10&offset=0&search=john
+# Build image
+docker build -t nextjs-backend .
 
-# Create user
-POST /api/users
-Content-Type: application/json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "age": 25
-}
-
-# Get specific user
-GET /api/users/{id}
-
-# Update user
-PUT /api/users/{id}
-Content-Type: application/json
-{
-  "name": "Jane Doe",
-  "email": "jane@example.com"
-}
-
-# Delete user
-DELETE /api/users/{id}
+# Run container
+docker run -p 3000:3000 nextjs-backend
 ```
 
-## 🎯 Decorator System Usage
-
-### Creating DTOs
-
-```javascript
-// lib/api/dto/user.dto.js
-import { IsString, IsEmail, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '../decorators/index.js';
-
-export class CreateUserDto {
-  @ApiProperty({
-    description: 'User full name',
-    example: 'John Doe',
-    minLength: 2,
-    maxLength: 100,
-  })
-  @IsString()
-  name;
-
-  @ApiProperty({
-    description: 'User email address',
-    format: 'email',
-    example: 'john.doe@example.com',
-  })
-  @IsEmail()
-  email;
-
-  @ApiPropertyOptional({
-    description: 'User age',
-    type: 'number',
-    minimum: 13,
-    maximum: 120,
-  })
-  @IsOptional()
-  age;
-}
-```
-
-### Creating API Endpoints
-
-```javascript
-// app/api/users/route.js
-import { NextResponse } from 'next/server';
-// Note: Full decorator system is implemented - this shows the concept
-
-/**
- * GET /api/users - Get all users
- * Supports pagination, search, and sorting
- */
-export async function GET(request) {
-  const url = new URL(request.url);
-  const limit = parseInt(url.searchParams.get('limit')) || 10;
-  const search = url.searchParams.get('search');
-
-  // Your business logic here
-  return NextResponse.json({ users: [], total: 0, limit, offset: 0 });
-}
-
-/**
- * POST /api/users - Create new user
- * Validates request body against CreateUserDto
- */
-export async function POST(request) {
-  const userData = await request.json();
-
-  // Validation would happen here with the decorator system
-  // Your business logic here
-  return NextResponse.json(userData, { status: 201 });
-}
-```
-
-## 🔧 Generated Files
-
-The system automatically generates:
-
-- **`lib/api/types/openapi.json`** - Complete OpenAPI 3.0 specification
-- **`lib/api/types/api-types.ts`** - TypeScript types for all schemas
-- **`lib/api/types/api-client.ts`** - Fully typed API client
-
-## 📖 Documentation
-
-- **[API System Documentation](./API.md)** - Complete guide to the decorator system
-- **Interactive Docs**: `/docs` - Live API documentation
-- **OpenAPI Spec**: `/api/docs` - Raw OpenAPI JSON
-
-## 🛠️ Technical Stack
-
-- **Framework**: Next.js 15+ (App Router)
-- **Language**: JavaScript/TypeScript with ES Modules
-- **Validation**: class-validator + class-transformer
-- **Documentation**: OpenAPI 3.0 + Swagger UI
-- **Type Generation**: openapi-typescript + swagger-typescript-api
-- **Styling**: Tailwind CSS
-
-## 🔄 Development Workflow
-
-1. **Create DTOs** in `lib/api/dto/` with decorator annotations
-2. **Implement API routes** in `app/api/` using standard Next.js patterns
-3. **Run watch mode** with `npm run api:dev` during development
-4. **Generated types and docs** are automatically updated
-5. **Build for production** with automatic OpenAPI generation
-
-## 📦 Environment Variables
-
-```env
-API_TITLE=Your API Name
-API_VERSION=1.0.0
-API_DESCRIPTION=Your API Description
-API_BASE_URL=http://localhost:3000
-```
-
-## 🚀 Production Deployment
-
-The OpenAPI generation is integrated into the build process:
+### Manual Deployment
 
 ```bash
-npm run build  # Generates OpenAPI spec before building
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
+
+## 📚 Additional Resources
+
+- **[Development Guide](app/DEVELOPMENT_GUIDE.md)** - Comprehensive development documentation
+- **[GitHub Copilot Instructions](.github/copilot-instructions.md)** - AI coding assistant setup
+- **[Examples](examples/)** - Common implementation patterns
+- **[Contributing](CONTRIBUTING.md)** - Contribution guidelines
 
 ## 🤝 Contributing
 
-1. Follow the existing code patterns
-2. Add comprehensive JSDoc comments
-3. Run `npm run test` before committing
-4. Update documentation when adding features
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📝 License
+## 📄 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) team for the amazing framework
+- [Mongoose](https://mongoosejs.com/) for MongoDB integration
+- [OpenAPI](https://www.openapis.org/) specification contributors
+- [Swagger](https://swagger.io/) for API documentation tools
 
 ---
 
-**Ready for production deployment with optimized architecture** 🚀
+**Built with ❤️ by [Yousif Abozid](https://github.com/YousifAbozid)**

@@ -2,7 +2,7 @@
   "name": "template-nextjs-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "✨ Modern Next.js API. Ready for production deployment with optimized architecture 🚀",
+  "description": "✨ Next.js 16+ API backend template with MongoDB, dynamic OpenAPI generation, and type-safe auto-documentation. Features route-centric architecture with co-located types and zero-configuration API discovery. 🚀",
   "homepage": "https://github.com/YousifAbozid/template-nextjs-backend#readme",
   "bugs": {
     "url": "https://github.com/YousifAbozid/template-nextjs-backend/issues"
