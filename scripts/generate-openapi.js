@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs/promises';
 import path from 'path';
-import { openApiConfig } from '../lib/api/config.ts';
+import { openApiConfig } from '../app/lib/api/config.ts';
 
 /**
  * Simple OpenAPI generation script using centralized configuration

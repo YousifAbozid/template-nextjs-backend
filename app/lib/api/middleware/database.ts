@@ -33,13 +33,13 @@ export const withDatabase = (handler: ApiHandler) => {
  * Usage: @withDbConnection
  */
 export const withDbConnection = (
-  _target: any,
+  _target: unknown,
   _propertyKey: string,
   descriptor: PropertyDescriptor
 ) => {
   const originalMethod = descriptor.value;
 
-  descriptor.value = async function (...args: any[]) {
+  descriptor.value = async function (...args: unknown[]) {
     try {
       await connectDB();
       return await originalMethod.apply(this, args);

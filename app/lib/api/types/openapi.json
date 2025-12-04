@@ -29,9 +29,7 @@
         "summary": "Health check endpoint",
         "description": "Returns the current health status of the API service",
         "operationId": "getHealthStatus",
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "parameters": [
           {
             "name": "detailed",
@@ -53,10 +51,7 @@
               "items": {
                 "type": "string"
               },
-              "example": [
-                "database",
-                "cache"
-              ]
+              "example": ["database", "cache"]
             }
           }
         ],
@@ -89,18 +84,11 @@
     "schemas": {
       "HealthResponseDto": {
         "type": "object",
-        "required": [
-          "status",
-          "timestamp"
-        ],
+        "required": ["status", "timestamp"],
         "properties": {
           "status": {
             "type": "string",
-            "enum": [
-              "healthy",
-              "degraded",
-              "unhealthy"
-            ],
+            "enum": ["healthy", "degraded", "unhealthy"],
             "description": "Overall health status",
             "example": "healthy"
           },

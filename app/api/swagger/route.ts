@@ -7,7 +7,7 @@ import path from 'path';
  */
 export async function GET() {
   try {
-    const specPath = path.join(process.cwd(), 'lib/api/types/openapi.json');
+    const specPath = path.join(process.cwd(), 'app/lib/api/types/openapi.json');
     const specContent = await fs.readFile(specPath, 'utf8');
     const openApiSpec = JSON.parse(specContent);
 

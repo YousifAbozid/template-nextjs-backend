@@ -13,12 +13,16 @@ const eslintConfig = defineConfig([
     'build/**',
     'next-env.d.ts',
     // Generated files
-    'lib/api/types/**',
+    'app/lib/api/types/**',
     'scripts/**',
+    // API Framework files with intentional any types
+    'app/lib/api/decorators/**',
+    'app/lib/api/schema/**',
+    'app/lib/api/validation/**',
   ]),
   // More lenient rules for library files
   {
-    files: ['lib/**/*.{js,jsx,ts,tsx}'],
+    files: ['app/lib/**/*.{js,jsx,ts,tsx}'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',

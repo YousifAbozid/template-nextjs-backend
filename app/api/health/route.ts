@@ -1,82 +1,10 @@
 import { NextResponse } from 'next/server';
-import { checkDatabaseHealth } from '@/lib/api/database';
-import { ApiProperty } from '@/lib/api/decorators';
-
-/**
- * Health status enum
- */
-const HealthStatus = {
-  HEALTHY: 'healthy',
-  DEGRADED: 'degraded',
-  UNHEALTHY: 'unhealthy',
-} as const;
-
-/**
- * Component health interface
- */
-interface ComponentHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  message: string;
-  responseTime?: number;
-  details?: Record<string, unknown>;
-}
-
-/**
- * Health response DTO
- */
-class HealthResponseDto {
-  @ApiProperty({
-    description: 'Overall service health status',
-    example: 'healthy',
-    enum: ['healthy', 'degraded', 'unhealthy'],
-  })
-  status!: string;
-
-  @ApiProperty({
-    description: 'Health check timestamp',
-    format: 'date-time',
-    example: '2023-12-04T10:30:00Z',
-  })
-  timestamp!: string;
-
-  @ApiProperty({
-    description: 'Service version',
-    example: '1.0.0',
-  })
-  version!: string;
-
-  @ApiProperty({
-    description: 'Health check message',
-    example: 'All systems operational',
-    required: false,
-  })
-  message?: string;
-
-  @ApiProperty({
-    description: 'Individual component health status',
-    type: 'object',
-    required: false,
-    example: {
-      database: {
-        status: 'healthy',
-        message: 'Database connection successful',
-        responseTime: 45,
-      },
-      cache: {
-        status: 'healthy',
-        message: 'Cache service operational',
-      },
-    },
-  })
-  components?: Record<string, ComponentHealth>;
-
-  @ApiProperty({
-    description: 'Overall response time in milliseconds',
-    example: 123,
-    required: false,
-  })
-  responseTime?: number;
-}
+import { checkDatabaseHealth } from '@/app/lib/api/database';
+import {
+  HealthStatus,
+  type ComponentHealth,
+  type HealthResponseDto,
+} from './types';
 
 /**
  * Check individual component health

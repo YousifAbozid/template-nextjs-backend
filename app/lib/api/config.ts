@@ -59,9 +59,9 @@ export const openApiConfig = {
   // File paths
   paths: {
     output: {
-      spec: 'lib/api/types/openapi.json',
-      types: 'lib/api/types/api-types.ts',
-      client: 'lib/api/types/api-client.ts',
+      spec: 'app/lib/api/types/openapi.json',
+      types: 'app/lib/api/types/api-types.ts',
+      client: 'app/lib/api/types/api-client.ts',
     },
   },
 
@@ -69,7 +69,7 @@ export const openApiConfig = {
   patterns: [
     'app/api/**/*.js',
     'app/api/**/*.ts',
-    'lib/api/**/*.js',
-    'lib/api/**/*.ts',
+    'app/lib/api/**/*.js',
+    'app/lib/api/**/*.ts',
   ],
 };
