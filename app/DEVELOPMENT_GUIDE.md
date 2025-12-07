@@ -293,7 +293,7 @@ const UpdateUserSchema = BaseUserSchema.partial();
 - **Health Check**: `GET /api/health`
 - **API Info**: `GET /api`
 - **Swagger UI**: `http://localhost:3000/api/docs`
-- **OpenAPI Spec**: `http://localhost:3000/openapi.json`
+- **OpenAPI Spec**: `http://localhost:3000/api/openapi.json`
 - **Example Endpoint**: `GET /api/users`
 
 ---

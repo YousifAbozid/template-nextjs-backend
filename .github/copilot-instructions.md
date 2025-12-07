@@ -229,7 +229,7 @@ return NextResponse.json(
 - **Health check**: `/api/health`
 - **API info**: `/api`
 - **API docs**: `/api/docs` (Swagger UI)
-- **OpenAPI spec**: `/openapi.json` (JSON)
+- **OpenAPI spec**: `/api/openapi.json` (JSON)
 
 ## Tools & Technologies
 

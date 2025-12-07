@@ -1,17 +1,17 @@
 # SDK Usage Examples
 
-This document shows how to use the auto-generated type-safe SDK.
+This document shows how to use the auto-generated type-safe SDK with React Query hooks.
 
 ## Prerequisites
 
 Make sure you've generated the SDK:
 
 ```bash
-npm run api:generate  # Generate OpenAPI spec
-npm run api:sdk       # Generate SDK from spec
+npm run api:generate  # Generate OpenAPI spec from Zod schemas
+npm run api:sdk       # Generate SDK with React Query hooks from spec
 ```
 
-This creates `sdk/index.ts` with React Query hooks.
+This creates `sdk/index.ts` with fully typed React Query hooks.
 
 ---
 
