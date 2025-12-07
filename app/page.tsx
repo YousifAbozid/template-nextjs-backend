@@ -47,10 +47,9 @@ export default function Home() {
             <span className="text-blue-400 block">API Backend</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Next.js 16+ API backend template with MongoDB, dynamic OpenAPI
-            generation, and type-safe auto-documentation. Features route-centric
-            architecture with co-located types and zero-configuration API
-            discovery.
+            Next.js 16+ API backend template with MongoDB, Zod schemas, and
+            automatic OpenAPI generation. Features functional architecture with
+            co-located schemas and zero-configuration API discovery.
           </p>
         </div>
 
@@ -73,11 +72,11 @@ export default function Home() {
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">
-              Auto-Generated OpenAPI
+              Zod-to-OpenAPI
             </h3>
             <p className="text-gray-300">
-              Dynamic OpenAPI 3.0 spec generation from your route files with
-              type-safe client generation.
+              Automatic OpenAPI 3.0 spec generation from Zod schemas with
+              type-safe React Query SDK generation.
             </p>
           </div>
 
@@ -123,11 +122,11 @@ export default function Home() {
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">
-              Route-Centric Architecture
+              Functional Architecture
             </h3>
             <p className="text-gray-300">
-              Co-located types and automatic API discovery with zero
-              configuration required.
+              Pure functions with co-located Zod schemas and automatic route
+              discovery. No classes or decorators.
             </p>
           </div>
 
@@ -149,8 +148,8 @@ export default function Home() {
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Type-Safe</h3>
             <p className="text-gray-300">
-              Full TypeScript support with automatic type generation and
-              validation decorators.
+              Full TypeScript support with Zod runtime validation and automatic
+              type inference.
             </p>
           </div>
 
@@ -266,14 +265,15 @@ export default function Home() {
                 System Status
               </Link>
               <Link
-                href="/api/swagger"
+                href="/api/openapi.json"
                 className="text-sm text-gray-300 hover:text-blue-400 transition-colors"
               >
                 OpenAPI Spec
               </Link>
             </div>
             <p className="text-sm text-gray-400">
-              © 2025 Next.js Backend Template. MIT License.
+              © {new Date().getFullYear()} Next.js Backend Template. MIT
+              License.
             </p>
           </div>
         </div>
