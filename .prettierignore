@@ -30,3 +30,6 @@ public/
 
 # Husky files
 .husky/
+
+# Generated openapi specs
+openapi.json

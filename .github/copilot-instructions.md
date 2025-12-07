@@ -192,12 +192,29 @@ return NextResponse.json(
 
 - `app/lib/api/config.ts` - Database config
 - `orval.config.ts` - SDK generation config
+- `proxy.ts` - Next.js 16+ global proxy (CORS)
 
 ### Core Helpers
 
 - `app/lib/api/openapi/registry.ts` - OpenAPI registry
 - `app/lib/api/openapi/helpers.ts` - Response helpers
-- `app/lib/api/middleware/database.ts` - Connection middleware
+- `app/lib/api/middleware/database.ts` - Database connection wrapper
+- `app/lib/api/middleware/index.ts` - Middleware exports
+
+### Middleware Architecture
+
+**Two types of middleware:**
+
+1. **Global Proxy** (`proxy.ts` at root) - Next.js 16+ convention
+   - Next.js edge proxy for CORS
+   - Runs before all requests
+   - Limited to Edge Runtime
+   - Named `proxy.ts` with `proxy()` function (changed in v16)
+
+2. **Route Handler Wrappers** (`app/lib/api/middleware/`)
+   - Function wrappers like `withDatabase`
+   - Full Node.js runtime access
+   - Applied per-route
 
 ### Generation Scripts
 

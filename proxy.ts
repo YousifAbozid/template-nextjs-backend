@@ -1,5 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+/**
+ * Next.js 16+ Proxy Function - Global CORS Handler
+ *
+ * IMPORTANT: In Next.js 16+, the middleware file is named `proxy.ts` (not middleware.ts)
+ * and exports a `proxy` function (not middleware).
+ *
+ * This runs before all API routes to handle CORS and other global concerns.
+ *
+ * @see https://nextjs.org/docs/app/api-reference/file-conventions/proxy
+ *
+ * @see https://nextjs.org/docs/messages/middleware-to-proxy
+ */
+
 const allowedOrigins = [
   'http://localhost:3000',
   'https://localhost:3000',
@@ -46,6 +59,7 @@ export function proxy(request: NextRequest) {
   return response;
 }
 
+// Configure which paths this middleware applies to
 export const config = {
   matcher: '/api/:path*',
 };

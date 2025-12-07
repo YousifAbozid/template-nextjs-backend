@@ -25,8 +25,10 @@ app/api/[resource]/
 app/lib/api/
 ├── openapi/          # OpenAPI registry and helpers
 ├── database/         # MongoDB connection utilities
-├── middleware/       # Shared middleware (withDatabase)
+├── middleware/       # Route handler wrappers (withDatabase, etc.)
 └── models/           # Mongoose models
+
+proxy.ts              # Next.js 16+ global proxy (CORS)
 
 scripts/
 ├── generate-openapi.mjs   # OpenAPI spec generator
@@ -39,6 +41,92 @@ sdk/
 openapi.json          # Generated OpenAPI spec (project root)
 orval.config.ts       # Orval SDK generator configuration
 ```
+
+---
+
+## Middleware Architecture
+
+This project uses **two distinct types of middleware**:
+
+### 1. Global Next.js Proxy (`proxy.ts`) - **New in Next.js 16+**
+
+**Location**: `proxy.ts` (project root)
+
+**Purpose**: Runs at the edge **before** all requests hit your API routes.
+
+**Note**: In Next.js 16+, the file is named `proxy.ts` (not `middleware.ts`) and exports a `proxy()` function.
+
+**Use cases**:
+
+- CORS handling
+- Authentication checks
+- Request logging
+- Rate limiting
+- Redirects
+
+**Example**:
+
+```typescript
+// middleware.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  // Handle CORS
+  const response = NextResponse.next();
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  return response;
+}
+
+export const config = {
+  matcher: '/api/:path*', // Apply to all API routes
+};
+```
+
+**Key Points**:
+
+- Runs in the Edge Runtime (limited Node.js APIs)
+- Cannot use database connections or heavy operations
+- Perfect for headers, redirects, and auth checks
+
+### 2. Route Handler Wrappers (`app/lib/api/middleware/`)
+
+**Location**: `app/lib/api/middleware/`
+
+**Purpose**: Higher-order functions that wrap individual route handlers.
+
+**Use cases**:
+
+- Database connection management
+- Request validation
+- Error handling
+- Response formatting
+- Per-route authorization
+
+**Example**:
+
+```typescript
+// app/lib/api/middleware/database.ts
+export const withDatabase = (handler: ApiHandler) => {
+  return async (req: NextRequest, ...args: unknown[]) => {
+    await connectDB();
+    return await handler(req, ...args);
+  };
+};
+
+// Usage in route.ts
+export const GET = withDatabase(async () => {
+  // DB is connected here
+  const users = await User.find();
+  return NextResponse.json({ data: users });
+});
+```
+
+**Key Points**:
+
+- Runs in the Node.js runtime (full APIs available)
+- Can use database, filesystem, etc.
+- Applied per-route, not globally
+- Can be composed (chain multiple wrappers)
 
 ---
 
@@ -176,9 +264,57 @@ export const GET = withDatabase(async () => {
 - Error handling
 - Connection state management
 
+### 3. Creating Custom Middleware Wrappers
+
+You can create custom middleware wrappers in `app/lib/api/middleware/`:
+
+```typescript
+// app/lib/api/middleware/auth.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+type ApiHandler = (
+  req: NextRequest,
+  ...args: unknown[]
+) => Promise<Response> | Response;
+
+export const withAuth = (handler: ApiHandler) => {
+  return async (req: NextRequest, ...args: unknown[]) => {
+    const token = req.headers.get('authorization');
+
+    if (!token) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Verify token logic here
+
+    return await handler(req, ...args);
+  };
+};
+```
+
+**Composing multiple wrappers**:
+
+```typescript
+// app/api/protected/route.ts
+import { withDatabase } from '@/lib/api/middleware';
+import { withAuth } from '@/lib/api/middleware/auth';
+
+// Compose middleware - executes right-to-left
+export const GET = withAuth(
+  withDatabase(async (req: NextRequest) => {
+    // Both auth and DB are ready here
+    const users = await User.find();
+    return NextResponse.json({ data: users });
+  })
+);
+```
+
 ---
 
-### 3. Response Patterns
+### 4. Response Patterns
 
 **Standard API response format:**
 

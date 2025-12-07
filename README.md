@@ -83,7 +83,7 @@ app/
 ├── lib/                   # Shared utilities and business logic
 │   └── api/
 │       ├── database/      # 🟢 Database connection utilities
-│       ├── middleware/    # 🟢 Custom middleware
+│       ├── middleware/    # 🟢 Route handler wrappers (withDatabase, etc.)
 │       ├── models/        # 🟢 Mongoose models
 │       ├── openapi/       # 🟢 OpenAPI registry and helpers
 │       ├── config.ts      # 🟡 API configuration
@@ -91,6 +91,7 @@ app/
 ├── layout.tsx             # Root layout
 └── page.tsx               # Landing page
 
+proxy.ts                   # 🟢 Next.js 16+ global proxy (CORS)
 sdk/
 └── index.ts               # 🔴 Auto-generated SDK (don't edit)
 
@@ -98,7 +99,22 @@ openapi.json               # 🔴 Auto-generated OpenAPI spec (don't edit)
 ```
 
 **Legend**: 🟢 Safe to modify | 🟡 Modify carefully | 🔴 Auto-generated (don't touch)
-**Legend**: 🟢 Safe to modify | 🟡 Modify carefully | 🔴 Auto-generated (don't touch)
+
+### Middleware Architecture
+
+This project uses **two types of middleware**:
+
+1. **Global Proxy** (`proxy.ts` at root) - **New in Next.js 16+**
+   - Next.js edge proxy function that runs **before** all requests
+   - Named `proxy.ts` and exports `proxy()` function (changed from `middleware.ts` in v16)
+   - Handles CORS for all API routes
+   - [Next.js Middleware Docs](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+
+2. **Route Handler Wrappers** (`app/lib/api/middleware/`)
+   - Function wrappers for individual route handlers
+   - Examples: `withDatabase` (ensures DB connection)
+   - Used by wrapping your route handlers
+     **Legend**: 🟢 Safe to modify | 🟡 Modify carefully | 🔴 Auto-generated (don't touch)
 
 ## 🎯 Adding New API Routes
 
@@ -395,6 +411,7 @@ npm start
 ## 📚 Additional Resources
 
 - **[Development Guide](app/DEVELOPMENT_GUIDE.md)** - Comprehensive development documentation
+- **[Middleware Guide](MIDDLEWARE_GUIDE.md)** - Complete guide to global vs route-specific middleware
 - **[SDK Usage Examples](SDK_USAGE_EXAMPLES.md)** - How to use the auto-generated SDK
 - **[GitHub Copilot Instructions](.github/copilot-instructions.md)** - AI coding assistant setup
 
