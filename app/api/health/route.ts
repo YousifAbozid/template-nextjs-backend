@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import { checkDatabaseHealth } from '@/lib/api/database';
-import {
-  HealthStatus,
-  type ComponentHealth,
-  type HealthResponseDto,
-} from './types';
+import type { ComponentHealth, HealthResponse } from './schema';
+import './openapi'; // Import to register OpenAPI routes
 
 /**
  * Check individual component health
@@ -75,12 +72,9 @@ async function checkComponentHealth(
  * Returns comprehensive health status with component details and performance metrics
  */
 export async function GET(request: Request) {
-  const startTime = Date.now();
-
   try {
     // Parse query parameters
     const url = new URL(request.url);
-    const detailed = url.searchParams.get('detailed') === 'true';
     const componentsParam = url.searchParams.getAll('components');
     const components =
       componentsParam.length > 0
@@ -92,13 +86,13 @@ export async function GET(request: Request) {
       process.env.npm_package_version || process.env.API_VERSION || '1.0.0';
 
     // Base health data
-    const healthData: HealthResponseDto = {
-      status: HealthStatus.HEALTHY,
+    const healthData: HealthResponse = {
+      status: 'healthy' as const,
       timestamp,
       version,
     };
 
-    let overallStatus: string = HealthStatus.HEALTHY;
+    let overallStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
     const componentResults: Record<string, ComponentHealth> = {};
 
     // Check specific components if requested
@@ -117,59 +111,41 @@ export async function GET(request: Request) {
 
           // Update overall status based on component health
           if (result.status === 'unhealthy') {
-            overallStatus = HealthStatus.UNHEALTHY;
+            overallStatus = 'unhealthy';
           } else if (
             result.status === 'degraded' &&
-            overallStatus === HealthStatus.HEALTHY
+            overallStatus === 'healthy'
           ) {
-            overallStatus = HealthStatus.DEGRADED;
+            overallStatus = 'degraded';
           }
         } else {
           componentResults[`error_${Date.now()}`] = {
             status: 'unhealthy',
             message: 'Component check failed',
           };
-          overallStatus = HealthStatus.UNHEALTHY;
+          overallStatus = 'unhealthy';
         }
       });
 
-      healthData.components = componentResults;
+      healthData.checks = componentResults;
     }
 
-    // Add detailed information if requested
-    if (detailed) {
-      const unhealthyComponents = Object.values(componentResults).filter(
-        c => c.status === 'unhealthy'
-      ).length;
-      const degradedComponents = Object.values(componentResults).filter(
-        c => c.status === 'degraded'
-      ).length;
-
-      if (overallStatus === HealthStatus.UNHEALTHY) {
-        healthData.message = `${unhealthyComponents} component(s) unhealthy`;
-      } else if (overallStatus === HealthStatus.DEGRADED) {
-        healthData.message = `${degradedComponents} component(s) degraded`;
-      } else {
-        healthData.message = 'All systems operational';
-      }
-    }
+    // Add uptime
+    healthData.uptime = process.uptime();
 
     healthData.status = overallStatus;
-    healthData.responseTime = Date.now() - startTime;
 
-    const statusCode = overallStatus === HealthStatus.UNHEALTHY ? 503 : 200;
+    const statusCode = (overallStatus as string) === 'unhealthy' ? 503 : 200;
     return NextResponse.json(healthData, { status: statusCode });
   } catch (error: unknown) {
     console.error('Health check error:', error);
-    const responseTime = Date.now() - startTime;
 
     return NextResponse.json(
       {
-        status: HealthStatus.UNHEALTHY,
+        status: 'unhealthy' as const,
         timestamp: new Date().toISOString(),
         version: process.env.npm_package_version || '1.0.0',
-        message: error instanceof Error ? error.message : 'Health check failed',
-        responseTime,
+        uptime: process.uptime(),
       },
       { status: 503 }
     );

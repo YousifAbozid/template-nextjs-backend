@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withDatabase } from '@/lib/api/middleware';
 import { User } from '@/lib/api/models';
+import { CreateUserRequestSchema } from './schema';
+import './openapi'; // Import to register OpenAPI routes
 
 /**
- * Get all users
+ * GET /api/users - Get all users
  */
 export const GET = withDatabase(async () => {
   try {
@@ -27,23 +29,25 @@ export const GET = withDatabase(async () => {
 });
 
 /**
- * Create a new user
+ * POST /api/users - Create a new user
  */
 export const POST = withDatabase(async (req: NextRequest) => {
   try {
     const body = await req.json();
-    const { name, email } = body;
 
-    // Basic validation
-    if (!name || !email) {
+    // Validate with Zod
+    const validationResult = CreateUserRequestSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Name and email are required',
+          error: validationResult.error.errors[0].message,
         },
         { status: 400 }
       );
     }
+
+    const { name, email } = validationResult.data;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
